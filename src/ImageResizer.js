@@ -20,11 +20,11 @@ export default function ImageResizer() {
     fileSize: null,
   });
 
-  const { control, watch } = useForm({
+  const { control, watch, setValue } = useForm({
     defaultValues: {
       width: 300,
       height: 300,
-      format: "JPG",
+      fileType: "JPEG",
       quality: 100,
     },
   });
@@ -105,9 +105,7 @@ export default function ImageResizer() {
   };
 
   return (
-    <div className="min-h-screen grid-background 
-    bg-teal-50 flex flex-col md:flex-row 
-    items-center justify-center p-4 gap-4">
+    <div className="min-h-screen grid-background bg-teal-50 flex flex-col md:flex-row items-center justify-center p-4 gap-4">
       {/* Image Previe in the middle  */}
       <div className="w-full md:w-1/2 1 flex justify-center mb-6 md:mb-0">
         <div className="bg-white shadow-xl rounded-lg w-full max-w-lg flex items-center justify-center">
@@ -117,27 +115,56 @@ export default function ImageResizer() {
                 src={resizerImage}
                 alt="Resized Image"
                 className="transition-all duration-500 ease-in-out max-w-full h-auto rounded-lg shadow-lg"
-              // style={{ width: `${width}px`, height: `${height}px` }}
+                // style={{ width: `${width}px`, height: `${height}px` }}
               />
             </>
           ) : (
             // Upload Box
-            <div className="bg-teal-600 w-full rounded-lg 
-            max-w-lg border-dashed border-4 border-white">
-              <div className="bg-gradient-to-r from-teal-600 to-indigo-500 via-sky-500 via-60% w-full rounded-lg   
+            <div
+              className="bg-teal-600 w-full rounded-lg 
+            max-w-lg border-dashed border-4 border-white"
+            >
+              <div
+                className="bg-gradient-to-r from-teal-600 to-indigo-500 via-sky-500 via-60% w-full rounded-lg   
             max-w-lg flex items-center justify-center
-            border-soild border-2 border-white p-4">
+            border-soild border-2 border-white p-4"
+              >
                 {/* File Upload */}
                 <div class="flex items-center justify-center w-full">
-                  <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-4 border-white border-dashed rounded-lg cursor-pointer bg-white dark:hover:bg-white-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-white-600 dark:hover:border-white-500 dark:hover:bg-gray-600">
+                  <label
+                    for="dropzone-file"
+                    class="flex flex-col items-center justify-center w-full h-64 border-4 border-white border-dashed rounded-lg cursor-pointer bg-white dark:hover:bg-white-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-white-600 dark:hover:border-white-500 dark:hover:bg-gray-600"
+                  >
                     <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                      <svg class="w-8 h-8 mb-4 text-white-500 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                      <svg
+                        class="w-8 h-8 mb-4 text-white-500 dark:text-white"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 16"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                        />
                       </svg>
-                      <p class="mb-2 text-sm text-gray-500 dark:text-white"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                      <p class="text-xs text-gray-500 dark:text-white">PNG, JPG </p>
+                      <p class="mb-2 text-sm text-gray-500 dark:text-white">
+                        <span class="font-semibold">Click to upload</span> or
+                        drag and drop
+                      </p>
+                      <p class="text-xs text-gray-500 dark:text-white">
+                        PNG, JPG{" "}
+                      </p>
                     </div>
-                    <input id="dropzone-file" type="file" class="hidden" onChange={handleImageUpload} />
+                    <input
+                      id="dropzone-file"
+                      type="file"
+                      class="hidden"
+                      onChange={handleImageUpload}
+                    />
                   </label>
                 </div>
               </div>
@@ -230,19 +257,23 @@ export default function ImageResizer() {
           <div className="flex flex-row gap-4">
             {/* File Type */}
             <Controller
-              name="format"
+              name="fileType"
               control={control}
               render={({ field }) => (
                 <div className="mb-4 flex flex flex-row items-center gap-2">
                   <label className="text-teal-700 text-sm font-bold">
                     File Type
                   </label>
-                  <select {...field} className="shadow-md appearance-none border-teal-300 rounded w-half py-2 px-3 text-gray-700 
-                    leading-tight focus:outline-none focus:shadow-outline" name="format" id="format">
-                    <option value="JPEG">JPEG</option>
+                  <select
+                    {...field}
+                    className="shadow-md appearance-none border-teal-300 rounded w-half py-2 px-3 text-gray-700 
+                    leading-tight focus:outline-none focus:shadow-outline"
+                    name="fileType"
+                    id="fileType"
+                  >
                     <option value="PNG">PNG</option>
-                    <option value="mercedes">Mercedes</option>
-                    <option value="audi">Audi</option>
+                    <option value="JPEG">JPEG</option>
+                    <option value="JPG">JPG</option>
                   </select>
                 </div>
               )}
@@ -266,7 +297,6 @@ export default function ImageResizer() {
               )}
             />
           </div>
-
         </form>
 
         {/* Specifications */}
