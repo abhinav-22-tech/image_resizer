@@ -13,7 +13,7 @@ export default function ImageResizer() {
     fileType: null,
     fileSize: null,
   });
-  const [resizedImgInfo, setResizedImgInfo] = useState({
+  const [resizedImgInfoState, setResizedImgInfoState] = useState({
     width: null,
     height: null,
     fileType: null,
@@ -24,15 +24,16 @@ export default function ImageResizer() {
     defaultValues: {
       width: 300,
       height: 300,
-      fileType: "JPEG",
+      fileType: "jpeg",
       quality: 100,
     },
   });
 
+  // Change image size, quality and format
   const width = watch("width");
   const height = watch("height");
   const quality = watch("quality");
-  const format = "image/jpeg";
+  const fileType = watch("fileType");
 
   const extractImageInfo = (file) => {
     const reader = new FileReader();
@@ -65,14 +66,20 @@ export default function ImageResizer() {
     }
   };
 
-  const resizedImageInfo = (blob, newWidth, newHeight, newQuality, format) => {
+  const resizedImageInfo = (
+    blob,
+    newWidth,
+    newHeight,
+    newQuality,
+    fileType
+  ) => {
     if (blob) {
       const fileSizeKB = (blob.size / 1024).toFixed(2); // Convert bytes to KB
 
-      setResizedImgInfo({
+      setResizedImgInfoState({
         width: newWidth,
         height: newHeight,
-        fileType: format.split("/").pop(),
+        fileType: fileType.split("/").pop(),
         fileSize: fileSizeKB,
       });
     } else {
@@ -83,22 +90,24 @@ export default function ImageResizer() {
   useEffect(() => {
     if (originalImage) {
       if (width > 0 && height > 0 && quality > 0) {
-        resizedImage(originalImage, width, height, quality, format)
+        resizedImage(originalImage, width, height, quality, fileType)
           .then(({ blob, blobUrl }) => {
             setResizerImage(blobUrl);
-            resizedImageInfo(blob, width, height, quality, format);
+            resizedImageInfo(blob, width, height, quality, fileType);
           })
           .catch((error) => {
-            console.error("Image resizing error:", error);
+            console.error("Image resizing error:", error, fileType);
           });
       }
     }
-  }, [originalImage, width, height, quality]);
+  }, [originalImage, width, height, quality, fileType]);
 
   const downloadImage = () => {
     const link = document.createElement("a");
+    const fileName = originalImage.name.split(".")[0];
+    const extension = resizedImgInfoState.fileType.split("/").pop();
     link.href = resizerImage;
-    link.download = "resized-image.jpg";
+    link.download = `${fileName}_resized.${extension}`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -133,7 +142,8 @@ export default function ImageResizer() {
                 <div class="flex items-center justify-center w-full">
                   <label
                     for="dropzone-file"
-                    class="flex flex-col items-center justify-center w-full h-64 border-4 border-white border-dashed rounded-lg cursor-pointer bg-white dark:hover:bg-white-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-white-600 dark:hover:border-white-500 dark:hover:bg-gray-600"
+                    class="flex flex-col items-center justify-center w-full h-64 border-4 border-white border-dashed rounded-lg cursor-pointer bg-gray-100  hover:bg-gray-200
+                    hover:border-white"
                   >
                     <div class="flex flex-col items-center justify-center pt-5 pb-6">
                       <svg
@@ -181,10 +191,7 @@ export default function ImageResizer() {
         </h1>
 
         {/* <input
-          className="block w-full text-sm text-teal-700
-          file:rounded-full file:border file:border-teal-300 file:text-sm 
-          file:bg-white file:text-teal-700 hover:file:bg-teal-100
-          bg-white rounded-md cursor-pointer focus:outline-none mb-4"
+          className="block w-full text-sm text-teal-700 file:rounded-full file:border file:border-teal-300 file:text-sm file:bg-white file:text-teal-700 hover:file:bg-teal-100 bg-white rounded-md cursor-pointer focus:outline-none mb-4"
           type="file"
           onChange={handleImageUpload}
         /> */}
@@ -249,6 +256,7 @@ export default function ImageResizer() {
                   max="100"
                   step="1"
                   className="w-full cursor-pointer"
+                  disabled={resizedImgInfoState.fileType === "png"}
                 />
               </div>
             )}
@@ -260,7 +268,7 @@ export default function ImageResizer() {
               name="fileType"
               control={control}
               render={({ field }) => (
-                <div className="mb-4 flex flex flex-row items-center gap-2">
+                <div className="mb-4 flex flex-row items-center gap-2">
                   <label className="text-teal-700 text-sm font-bold">
                     File Type
                   </label>
@@ -271,9 +279,9 @@ export default function ImageResizer() {
                     name="fileType"
                     id="fileType"
                   >
-                    <option value="PNG">PNG</option>
-                    <option value="JPEG">JPEG</option>
-                    <option value="JPG">JPG</option>
+                    <option value="image/jpeg">JPEG</option>
+                    <option value="image/png">PNG</option>
+                    <option value="image/webp">WEBP</option>
                   </select>
                 </div>
               )}
@@ -288,7 +296,7 @@ export default function ImageResizer() {
                     Aspect Ratio
                   </label>
                   <input
-                    type="radio"
+                    type="checkbox"
                     {...field}
                     className="border-teal-300 rounded text-gray-700 
                     leading-tight focus:shadow-outline cursor-pointer"
@@ -326,13 +334,13 @@ export default function ImageResizer() {
                 </h3>
                 <p className="text-gray-700 text-sm">
                   <span className="font-bold">
-                    {resizedImgInfo.width} x {resizedImgInfo.height}
+                    {resizedImgInfoState.width} x {resizedImgInfoState.height}
                   </span>{" "}
                   pixels
                   <span className="ml-2 text-gray-500">
-                    {resizedImgInfo.fileSize} KB{" "}
+                    {resizedImgInfoState.fileSize} KB{" "}
                     <span className="font-medium">
-                      {resizedImgInfo.fileType}
+                      {resizedImgInfoState.fileType}
                     </span>
                   </span>
                 </p>
