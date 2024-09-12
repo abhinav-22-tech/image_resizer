@@ -124,7 +124,7 @@ export default function ImageResizer() {
                 src={resizerImage}
                 alt="Resized Image"
                 className="transition-all duration-500 ease-in-out max-w-full h-auto rounded-lg shadow-lg"
-                // style={{ width: `${width}px`, height: `${height}px` }}
+              // style={{ width: `${width}px`, height: `${height}px` }}
               />
             </>
           ) : (
@@ -142,8 +142,9 @@ export default function ImageResizer() {
                 <div class="flex items-center justify-center w-full">
                   <label
                     for="dropzone-file"
-                    class="flex flex-col items-center justify-center w-full h-64 border-4 border-white border-dashed rounded-lg cursor-pointer bg-gray-100  hover:bg-gray-200
-                    hover:border-white"
+                    class="flex flex-col items-center justify-center w-full h-64 border-4 border-white border-dashed rounded-lg 
+                    cursor-pointer bg-gray-100  hover:bg-gray-200
+                    hover:border-white dark:bg-gray-500 dark:hover:bg-gray-600"
                   >
                     <div class="flex flex-col items-center justify-center pt-5 pb-6">
                       <svg
